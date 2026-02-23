@@ -75,6 +75,11 @@ class Settings(BaseSettings):
     tenant_config: Optional[str] = None
     tenant_config_path: Optional[str] = None
 
+    # Sentry (error tracking with PII scrubbing)
+    sentry_dsn: Optional[str] = None
+    sentry_environment: str = "development"
+    sentry_traces_sample_rate: float = 0.1
+
     model_config = SettingsConfigDict(
         env_prefix="",  # 프리픽스 없음 - GEMINI_*, SUPABASE_COMMON_* 직접 사용
         env_file=(".env", ".env.local"),

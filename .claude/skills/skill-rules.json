@@ -1,0 +1,350 @@
+{
+    "version": "2.0",
+    "description": "Modular skill activation system for Claude Code. Skills are organized into modules that can be enabled/disabled per project.",
+    "modules": {
+        "core": {
+            "enabled": true,
+            "description": "Core skills always active",
+            "skills": ["skill-developer", "error-tracking"]
+        },
+        "freshworks": {
+            "enabled": false,
+            "description": "Freshworks App SDK (FDK) development",
+            "skills": ["fdk-guidelines"]
+        },
+        "python": {
+            "enabled": false,
+            "description": "Python/FastAPI development patterns",
+            "skills": ["fastapi-guidelines"]
+        },
+        "typescript": {
+            "enabled": false,
+            "description": "TypeScript/Express development patterns",
+            "skills": ["express-guidelines"]
+        },
+        "react": {
+            "enabled": false,
+            "description": "React development patterns",
+            "skills": ["react-guidelines"]
+        },
+        "nextjs": {
+            "enabled": false,
+            "description": "Next.js specific patterns",
+            "skills": ["nextjs-guidelines"]
+        }
+    },
+    "skills": {
+        "skill-developer": {
+            "module": "core",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Meta-skill for creating and managing Claude Code skills",
+            "skillPath": "_core/skill-developer",
+            "promptTriggers": {
+                "keywords": [
+                    "skill system",
+                    "create skill",
+                    "add skill",
+                    "skill triggers",
+                    "skill rules",
+                    "hook system",
+                    "skill development",
+                    "skill-rules.json"
+                ],
+                "intentPatterns": [
+                    "(how do|how does|explain).*?skill",
+                    "(create|add|modify|build).*?skill",
+                    "skill.*?(work|trigger|activate|system)"
+                ]
+            }
+        },
+        "error-tracking": {
+            "module": "core",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Sentry error tracking and performance monitoring patterns",
+            "skillPath": "_core/error-tracking",
+            "promptTriggers": {
+                "keywords": [
+                    "error handling",
+                    "exception",
+                    "sentry",
+                    "error tracking",
+                    "captureException",
+                    "monitoring",
+                    "performance tracking"
+                ],
+                "intentPatterns": [
+                    "(add|create|implement|setup).*?(error handling|sentry|error tracking)",
+                    "(fix|handle|catch).*?(error|exception)",
+                    "(how to|best practice).*?(error|sentry|monitoring)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "**/instrument.ts",
+                    "**/instrument.py",
+                    "**/sentry*.ts",
+                    "**/sentry*.py"
+                ],
+                "contentPatterns": [
+                    "@sentry",
+                    "Sentry\\.",
+                    "sentry_sdk",
+                    "captureException",
+                    "captureMessage",
+                    "capture_exception"
+                ]
+            }
+        },
+        "fastapi-guidelines": {
+            "module": "python",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "FastAPI/Python backend development patterns",
+            "skillPath": "python/fastapi-guidelines",
+            "promptTriggers": {
+                "keywords": [
+                    "fastapi",
+                    "python backend",
+                    "pydantic",
+                    "sqlalchemy",
+                    "async def",
+                    "APIRouter",
+                    "python api",
+                    "uvicorn"
+                ],
+                "intentPatterns": [
+                    "(create|add|implement|build).*?(fastapi|python.*?api|endpoint)",
+                    "(how to|best practice).*?(fastapi|pydantic|sqlalchemy)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "backend/**/*.py",
+                    "api/**/*.py",
+                    "app/**/*.py",
+                    "src/**/*.py"
+                ],
+                "pathExclusions": [
+                    "**/*_test.py",
+                    "**/test_*.py",
+                    "**/conftest.py"
+                ],
+                "contentPatterns": [
+                    "from fastapi",
+                    "APIRouter",
+                    "@app\\.(get|post|put|delete|patch)",
+                    "@router\\.(get|post|put|delete|patch)",
+                    "BaseModel"
+                ]
+            }
+        },
+        "express-guidelines": {
+            "module": "typescript",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Express/TypeScript backend development patterns",
+            "skillPath": "typescript/express-guidelines",
+            "promptTriggers": {
+                "keywords": [
+                    "express",
+                    "node backend",
+                    "typescript backend",
+                    "controller",
+                    "service",
+                    "repository",
+                    "route",
+                    "routing",
+                    "middleware",
+                    "Zod",
+                    "Prisma"
+                ],
+                "intentPatterns": [
+                    "(create|add|implement|build).*?(express|node.*?api|controller|service)",
+                    "(how to|best practice).*?(express|node|typescript.*?backend)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "backend/**/*.ts",
+                    "api/**/*.ts",
+                    "server/**/*.ts",
+                    "services/**/*.ts"
+                ],
+                "pathExclusions": [
+                    "**/*.test.ts",
+                    "**/*.spec.ts"
+                ],
+                "contentPatterns": [
+                    "router\\.",
+                    "app\\.(get|post|put|delete|patch)",
+                    "export.*Controller",
+                    "export.*Service",
+                    "prisma\\."
+                ]
+            }
+        },
+        "react-guidelines": {
+            "module": "react",
+            "type": "guardrail",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "React/TypeScript best practices",
+            "skillPath": "react/react-guidelines",
+            "promptTriggers": {
+                "keywords": [
+                    "component",
+                    "react component",
+                    "UI",
+                    "page",
+                    "modal",
+                    "dialog",
+                    "form",
+                    "MUI",
+                    "Material-UI",
+                    "styling",
+                    "frontend",
+                    "React",
+                    "hook",
+                    "useState",
+                    "useEffect"
+                ],
+                "intentPatterns": [
+                    "(create|add|make|build|update|modify|edit).*?(component|UI|page|modal|dialog|form)",
+                    "(how to|best practice).*?(component|react|MUI|hook)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "frontend/src/**/*.tsx",
+                    "client/src/**/*.tsx",
+                    "src/components/**/*.tsx",
+                    "src/features/**/*.tsx"
+                ],
+                "pathExclusions": [
+                    "**/*.test.tsx",
+                    "**/*.spec.tsx"
+                ],
+                "contentPatterns": [
+                    "from 'react'",
+                    "import React",
+                    "from '@mui/material'",
+                    "useState",
+                    "useEffect"
+                ]
+            }
+        },
+        "nextjs-guidelines": {
+            "module": "nextjs",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Next.js App Router and Server Components patterns",
+            "skillPath": "nextjs/nextjs-guidelines",
+            "promptTriggers": {
+                "keywords": [
+                    "next.js",
+                    "nextjs",
+                    "app router",
+                    "server component",
+                    "client component",
+                    "server action",
+                    "page.tsx",
+                    "layout.tsx",
+                    "loading.tsx",
+                    "error.tsx"
+                ],
+                "intentPatterns": [
+                    "(create|add|implement|build).*?(next|page|layout|server.*?component)",
+                    "(how to|best practice).*?(next|app.*?router|server.*?component)"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "app/**/*.tsx",
+                    "app/**/*.ts",
+                    "pages/**/*.tsx"
+                ],
+                "pathExclusions": [
+                    "**/*.test.tsx",
+                    "**/*.spec.tsx"
+                ],
+                "contentPatterns": [
+                    "'use client'",
+                    "'use server'",
+                    "export default function.*Page",
+                    "export default function.*Layout",
+                    "from 'next"
+                ]
+            }
+        },
+        "fdk-guidelines": {
+            "module": "freshworks",
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Freshworks App SDK (FDK) development - ALWAYS use official docs, never guess",
+            "skillPath": "freshworks/fdk-guidelines",
+            "promptTriggers": {
+                "keywords": [
+                    "fdk",
+                    "freshworks",
+                    "freshdesk",
+                    "freshservice",
+                    "freshsales",
+                    "freshchat",
+                    "freshcaller",
+                    "crayons",
+                    "freshworks app",
+                    "freshworks sdk",
+                    "marketplace app",
+                    "iparams",
+                    "manifest.json"
+                ],
+                "intentPatterns": [
+                    "(create|add|implement|build).*?(freshworks|fdk|freshdesk).*?(app|integration)",
+                    "(how to|best practice).*?(fdk|freshworks|crayons)",
+                    "(install|setup|configure).*?fdk"
+                ]
+            },
+            "fileTriggers": {
+                "pathPatterns": [
+                    "fdk/**/*",
+                    "**/freshworks/**/*",
+                    "**/manifest.json",
+                    "**/iparams.json"
+                ],
+                "contentPatterns": [
+                    "client\\.data\\.get",
+                    "client\\.interface\\.trigger",
+                    "client\\.request",
+                    "fw-button",
+                    "fw-input",
+                    "fw-modal",
+                    "@freshworks"
+                ]
+            }
+        }
+    },
+    "notes": {
+        "module_system": {
+            "description": "Skills are grouped into modules. Enable modules in setup.sh or manually edit this file.",
+            "core": "Always enabled - contains essential skills",
+            "other_modules": "Enable based on your project stack"
+        },
+        "enforcement_types": {
+            "suggest": "Skill suggestion appears but doesn't block execution",
+            "block": "Requires skill to be used before proceeding (guardrail)",
+            "warn": "Shows warning but allows proceeding"
+        },
+        "customization": {
+            "enable_module": "Set modules.<name>.enabled = true",
+            "add_skill": "Add skill definition and include in module's skills array"
+        }
+    }
+}

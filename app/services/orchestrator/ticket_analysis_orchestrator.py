@@ -20,6 +20,8 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from app.prompts.loader import get_prompt
+from app.services.denoise import denoise_conversations
+from app.services.guardrails import apply_guardrails
 from app.services.llm_gateway import get_llm_gateway, LLMRequest, LLMResponse
 from app.services.orchestrator.json_repair import try_parse_json, JSONRepairError
 from app.services.orchestrator.persistence import get_analysis_persistence
@@ -142,6 +144,13 @@ class TicketAnalysisOrchestrator:
             if analysis is None:
                 raise ValueError(f"Failed to parse LLM response: {parse_error}")
 
+            # Step 3.5: Apply guardrails (evidence validation + forbidden phrases)
+            analysis, violations = apply_guardrails(analysis)
+            if violations:
+                logger.warning(
+                    "[orchestrator] Guardrail violations fixed: %s", violations
+                )
+
             # Step 4: Compute gate
             confidence = analysis.get("confidence", 0.0)
             gate = self._compute_gate(confidence, options.confidence_threshold)
@@ -240,6 +249,10 @@ class TicketAnalysisOrchestrator:
         options: AnalysisOptions,
     ) -> Dict[str, Any]:
         """Build context for prompt rendering."""
+        # Denoise conversations (NoCut strategy)
+        raw_conversations = normalized_input.get("conversations", [])
+        denoise_result = denoise_conversations(raw_conversations)
+
         # Summarize ticket fields for prompt
         ticket_fields = normalized_input.get("ticket_fields", [])
         fields_summary = self._summarize_fields(ticket_fields)
@@ -252,7 +265,8 @@ class TicketAnalysisOrchestrator:
                 normalized_input.get("description_text") or
                 "(설명 없음)"
             ),
-            "conversations": normalized_input.get("conversations", []),
+            "conversations": denoise_result.conversation,
+            "denoise_kept_indices": denoise_result.kept_original_indices,
             "custom_fields": normalized_input.get("custom_fields", {}),
             "ticket_fields_summary": fields_summary,
             "similar_cases": [],  # TODO: Implement retrieval

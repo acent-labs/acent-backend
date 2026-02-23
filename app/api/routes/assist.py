@@ -30,6 +30,16 @@ from app.models.assist import (
     RefineResponse,
     Proposal,
 )
+from app.models.feedback import (
+    FeedbackSubmitRequest,
+    FeedbackSubmitResponse,
+    FeedbackEditRequest,
+    FeedbackEditResponse,
+    TrainingExportRequest,
+    TrainingExportResponse,
+    TrainingSampleExport,
+)
+from app.services.feedback_repository import get_feedback_repository
 from app.agents.orchestrator import build_graph
 from app.agents.retriever import retrieve_context
 from app.agents.analyzer import analyze_ticket as analyze_ticket_agent
@@ -829,6 +839,139 @@ async def get_proposal_status(
         raise
     except Exception as e:
         logger.error(f"상태 조회 오류: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
+
+# =============================================================================
+# HITL Feedback Endpoints (ported from nexus-ai)
+# =============================================================================
+
+
+@router.post("/feedback/submit", response_model=FeedbackSubmitResponse)
+async def submit_feedback(
+    request: FeedbackSubmitRequest,
+    x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
+):
+    """
+    Submit feedback on an analysis (helpful / not_helpful).
+    Optionally includes rating (1-5) and text feedback.
+    """
+    try:
+        repo = get_feedback_repository()
+        event_id = await repo.submit_feedback(
+            analysis_id=request.analysis_id,
+            event_type=request.event_type,
+            rating=request.rating,
+            feedback_text=request.feedback_text,
+            agent_id=request.agent_id,
+            tenant_id=x_tenant_id,
+        )
+
+        if not event_id:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to save feedback (DB may not be configured)",
+            )
+
+        return FeedbackSubmitResponse(
+            success=True,
+            event_id=event_id,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Feedback submit error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
+
+@router.post("/feedback/edit", response_model=FeedbackEditResponse)
+async def edit_feedback(
+    request: FeedbackEditRequest,
+    x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
+):
+    """
+    Submit an agent-edited/approved response for training.
+    The approved_response is stored for future fine-tuning.
+    """
+    try:
+        repo = get_feedback_repository()
+        sample_id = await repo.update_approved_response(
+            analysis_id=request.analysis_id,
+            approved_response=request.approved_response,
+            agent_id=request.agent_id,
+            tenant_id=x_tenant_id,
+        )
+
+        if not sample_id:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to save edited response (DB may not be configured)",
+            )
+
+        return FeedbackEditResponse(
+            success=True,
+            sample_id=sample_id,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Feedback edit error: {e}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        )
+
+
+@router.post("/training/export", response_model=TrainingExportResponse)
+async def export_training_data(
+    request: TrainingExportRequest,
+    x_tenant_id: str = Header(..., alias="X-Tenant-ID"),
+):
+    """
+    Export training samples with approved responses for fine-tuning.
+    Only returns samples where an agent has provided an approved_response.
+    """
+    try:
+        repo = get_feedback_repository()
+        samples = await repo.get_exportable_samples(
+            tenant_id=x_tenant_id,
+            limit=request.limit,
+            min_rating=request.min_rating,
+            mark_exported=request.mark_exported,
+        )
+
+        export_samples = [
+            TrainingSampleExport(
+                id=s["id"],
+                tenant_id=s["tenant_id"],
+                ticket_id=s["ticket_id"],
+                analysis_id=s.get("analysis_id", ""),
+                original_response=s.get("original_response", {}),
+                approved_response=s.get("approved_response", {}),
+                rating=s.get("rating"),
+                prompt_version=s.get("prompt_version"),
+                model=s.get("model"),
+                created_at=s.get("created_at"),
+            )
+            for s in samples
+        ]
+
+        return TrainingExportResponse(
+            success=True,
+            count=len(export_samples),
+            samples=export_samples,
+        )
+
+    except Exception as e:
+        logger.error(f"Training export error: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e),

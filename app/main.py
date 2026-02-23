@@ -14,6 +14,76 @@ from app.services.scheduler_service import get_scheduler_service
 logger = logging.getLogger(__name__)
 settings = get_settings()
 
+
+# =============================================================================
+# Sentry PII Scrubbing (ported from nexus-ai)
+# =============================================================================
+
+def _scrub_pii(event: dict, hint: dict) -> dict:
+    """Sentry before_send hook: scrub PII and conversation data."""
+    # Request body scrubbing
+    if "request" in event and "data" in event["request"]:
+        data = event["request"]["data"]
+        if isinstance(data, dict):
+            for field in [
+                "conversation", "conversations", "subject",
+                "approved_response", "feedback_text", "body_text",
+            ]:
+                if field in data:
+                    data[field] = "[SCRUBBED]"
+        elif isinstance(data, str):
+            event["request"]["data"] = "[SCRUBBED_BODY]"
+
+    # Request header scrubbing
+    if "request" in event and "headers" in event["request"]:
+        headers = event["request"]["headers"]
+        if isinstance(headers, dict):
+            for key in ["Authorization", "X-Api-Key", "X-Freshdesk-API-Key", "Cookie"]:
+                for k in [key, key.lower()]:
+                    if k in headers:
+                        headers[k] = "[REDACTED]"
+
+    # Exception local variable scrubbing
+    if "exception" in event and "values" in event["exception"]:
+        for exc in event["exception"]["values"]:
+            if "stacktrace" in exc and "frames" in exc["stacktrace"]:
+                for frame in exc["stacktrace"]["frames"]:
+                    if "vars" in frame:
+                        for var_name in list(frame["vars"].keys()):
+                            if any(
+                                s in var_name.lower()
+                                for s in [
+                                    "conversation", "subject", "prompt",
+                                    "text", "body", "api_key",
+                                ]
+                            ):
+                                frame["vars"][var_name] = "[SCRUBBED]"
+
+    return event
+
+
+# Initialize Sentry if configured
+if settings.sentry_dsn:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.fastapi import FastApiIntegration
+        from sentry_sdk.integrations.starlette import StarletteIntegration
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.sentry_environment,
+            traces_sample_rate=settings.sentry_traces_sample_rate,
+            before_send=_scrub_pii,
+            send_default_pii=False,
+            integrations=[
+                FastApiIntegration(transaction_style="endpoint"),
+                StarletteIntegration(transaction_style="endpoint"),
+            ],
+        )
+        logger.info("Sentry initialized (env=%s)", settings.sentry_environment)
+    except ImportError:
+        logger.warning("sentry-sdk not installed; Sentry disabled")
+
 # Configure logging
 logging.basicConfig(
     level=settings.log_level,
