@@ -8,7 +8,7 @@
             "skills": ["skill-developer", "error-tracking"]
         },
         "freshworks": {
-            "enabled": false,
+            "enabled": true,
             "description": "Freshworks App SDK (FDK) development",
             "skills": ["fdk-guidelines"]
         },

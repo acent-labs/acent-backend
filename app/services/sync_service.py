@@ -18,10 +18,10 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Awaitable, Optional
+from typing import Callable, Awaitable
 
 from app.services.freshdesk_client import FreshdeskClient
-from app.services.ingestion_service import FreshdeskIngestionService, TicketIngestionRecord
+from app.services.ingestion_service import FreshdeskIngestionService
 from app.services.entity_mapper import EntityMapper
 from app.services.normalizer import FreshdeskNormalizer, FieldMappings, NormalizedTicket, NormalizedArticle
 from app.services.transformer import DataTransformer, GeminiDocument
@@ -226,8 +226,6 @@ class SyncService:
                     article_since = self._last_article_sync
             
             # Run sync tasks in parallel
-            tasks = []
-            
             # 1. Ticket Sync Task
             async def run_ticket_sync():
                 if not opts.include_tickets:

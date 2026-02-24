@@ -15,17 +15,16 @@ from __future__ import annotations
 import logging
 import time
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from app.prompts.loader import get_prompt
 from app.services.denoise import denoise_conversations
 from app.services.guardrails import apply_guardrails
 from app.services.llm_gateway import get_llm_gateway, LLMRequest, LLMResponse
-from app.services.orchestrator.json_repair import try_parse_json, JSONRepairError
+from app.services.orchestrator.json_repair import try_parse_json
 from app.services.orchestrator.persistence import get_analysis_persistence
-from app.utils.schema_validation import validate_output
 
 logger = logging.getLogger(__name__)
 

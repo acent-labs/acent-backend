@@ -11,7 +11,6 @@ TypeScript google-file-saerch-tool/src/lib/freshdesk/client.ts 완전 포팅
 from __future__ import annotations
 
 import asyncio
-import base64
 import logging
 from datetime import datetime
 from typing import Any, List, Optional

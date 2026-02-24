@@ -138,14 +138,14 @@ class FreshdeskMetadataService:
             raise HTTPException(status.HTTP_502_BAD_GATEWAY, detail=str(exc)) from exc
 
         cache = FreshdeskMetadataCache()
-        for field in ticket_fields:
-            choices = field.get("choices")
+        for ticket_field in ticket_fields:
+            choices = ticket_field.get("choices")
             if not choices:
                 continue
             mapping = {int(choice["value"]): choice["label"] for choice in choices}
-            if field.get("name") == "status":
+            if ticket_field.get("name") == "status":
                 cache.status_map = mapping
-            elif field.get("name") == "priority":
+            elif ticket_field.get("name") == "priority":
                 cache.priority_map = mapping
         cache.category_map = {int(cat["id"]): cat["name"] for cat in categories}
         for category, folder_list in zip(categories, folders_nested):

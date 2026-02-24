@@ -3,7 +3,6 @@ LangGraph Approval Agent
 Handles approval logic and logging
 """
 import logging
-import time
 from typing import Literal
 from app.agents.state import AgentState
 

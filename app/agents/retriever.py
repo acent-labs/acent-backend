@@ -3,7 +3,7 @@ LangGraph Retriever Agent
 Retrieves similar cases and KB articles using Gemini File Search
 """
 import logging
-from typing import Dict, Any, List
+from typing import Any
 
 from app.agents.state import AgentState
 from app.services.gemini_file_search_client import GeminiFileSearchClient
@@ -65,9 +65,6 @@ async def retrieve_context(state: AgentState) -> AgentState:
         # We map this to our SearchResults structure
         # Note: Gemini File Search returns synthesized text, not raw documents list directly in the same way as vector DB
         # We will use the grounding chunks as "similar cases/kb"
-        
-        similar_cases = []
-        kb_procedures = []
         
         # This is a simplification. In a real scenario, we might parse chunks or use metadata
         # For now, we store the full text result in metadata and chunks in search_results

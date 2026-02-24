@@ -160,7 +160,7 @@ class LLMGateway:
                     used_fallback=used_fallback,
                 )
 
-            except asyncio.TimeoutError as exc:
+            except asyncio.TimeoutError:
                 last_err = LLMTimeoutError(f"Timeout provider={provider_name} purpose={req.purpose}")
             except Exception as exc:
                 last_err = exc

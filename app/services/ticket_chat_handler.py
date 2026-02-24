@@ -16,7 +16,6 @@ from app.services.gemini_client import GeminiClient, GeminiClientError
 from app.services.query_filter_analyzer import QueryFilterAnalyzer, get_query_filter_analyzer
 from app.services.freshdesk_search_service import (
     FreshdeskSearchService,
-    FreshdeskSearchResult,
     get_freshdesk_search_service,
 )
 

@@ -8,7 +8,6 @@ with conversion functions.
 from typing import TypedDict, Optional, List, Dict, Any
 from typing_extensions import NotRequired
 
-from pydantic import BaseModel, Field, ConfigDict
 
 
 # ============================================================================

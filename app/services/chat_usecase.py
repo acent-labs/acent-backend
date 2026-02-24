@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
-from typing import Any, AsyncIterator, Optional
+from typing import AsyncIterator, Optional
 import inspect
 import logging
 

@@ -8,10 +8,9 @@ FDK iparams.html에서 호출
 from __future__ import annotations
 
 import logging
-import time
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query, status
 
@@ -27,7 +26,6 @@ from app.models.admin import (
     SyncJobStatus,
     StoreInfo,
     StoreListResponse,
-    SchedulerJobInfo,
     SchedulerJobCreate,
     SchedulerStatus,
 )

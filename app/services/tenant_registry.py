@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from functools import lru_cache
-from typing import Dict, Optional
+from typing import Dict
 
 from fastapi import HTTPException, status
 

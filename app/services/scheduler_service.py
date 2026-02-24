@@ -7,7 +7,6 @@ APScheduler 기반 테넌트별 자동 동기화 스케줄러
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import uuid
 from datetime import datetime

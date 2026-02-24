@@ -1,7 +1,7 @@
 """커리큘럼 및 퀴즈 관련 데이터 모델."""
 
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
 from uuid import UUID
 
 from pydantic import BaseModel, Field

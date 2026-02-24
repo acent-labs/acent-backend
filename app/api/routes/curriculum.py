@@ -7,11 +7,9 @@ from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Query, Path
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
 
 from app.models.curriculum import (
     CurriculumModule,
-    CurriculumModuleResponse,
     QuizQuestion,
     QuizChoice,
     QuizSubmitRequest,
@@ -388,18 +386,8 @@ async def stream_module_chat(
                 "freshsales": "Freshsales",
                 "freshservice": "Freshservice",
             }
-            # RAG 필터용 제품값 (freshdesk-omni와 freshchat은 freshdesk로 통합 검색)
-            product_rag_filters = {
-                "freshdesk": ["freshdesk"],
-                "freshdesk-omni": ["freshdesk", "freshchat"],
-                "freshchat": ["freshdesk", "freshchat"],
-                "freshsales": ["freshsales"],
-                "freshservice": ["freshservice"],
-            }
-            
             product_name = product_display_names.get(product_id, "Freshworks")
-            rag_product_values = product_rag_filters.get(product_id, [product_id])
-            
+
             # 시스템 프롬프트 (모듈 컨텍스트 포함)
             system_prompt = f"""당신은 {product_name} {module.name_ko} 전문 교육 멘토입니다.
 

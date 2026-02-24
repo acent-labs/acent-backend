@@ -212,8 +212,6 @@ async def process_analysis_background(
         
         # Extract results
         proposal_data = final_state.get("proposed_action", {})
-        analysis = final_state.get("analysis_result", {})
-        search = final_state.get("search_results", {})
         
         # Update proposal with results
         proposal_data["id"] = proposal_id

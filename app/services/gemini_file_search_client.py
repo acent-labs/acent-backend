@@ -3,9 +3,8 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-import time
 from dataclasses import asdict
-from typing import Any, Dict, Generator, List, Optional, AsyncGenerator
+from typing import Any, Dict, List, Optional, AsyncGenerator
 
 import httpx
 
@@ -178,57 +177,6 @@ class GeminiFileSearchClient:
             raise GeminiClientError(f"Gemini REST error {response.status_code}: {message}")
 
         return response.json()
-
-    async def stream_search(
-        self,
-        *,
-        query: str,
-        store_names: List[str],
-        metadata_filters: Optional[List[MetadataFilter]] = None,
-        conversation_history: Optional[List[str]] = None,
-        system_instruction: Optional[str] = None,
-    ) -> AsyncGenerator[Dict[str, Any], None]:
-        metadata_expression = _build_metadata_expression(metadata_filters)
-        contents = self._build_contents(query, conversation_history)
-
-        yield {"event": "status", "data": {"message": "최적의 답변을 찾고 있습니다..."}}
-
-        for model_name in self.models:
-            yield {
-                "event": "status",
-                "data": {"message": "최적의 답변을 찾고 있습니다...", "model": model_name},
-            }
-            for attempt in range(self.max_attempts_per_model):
-                if attempt > 0:
-                    yield {
-                        "event": "status",
-                        "data": {
-                            "message": "잠시만 기다려 주세요...",
-                            "model": model_name,
-                            "attempt": attempt + 1,
-                        },
-                    }
-                try:
-                    data = await self._execute_request(
-                        model_name, contents, metadata_expression, store_names, system_instruction
-                    )
-                    payload = self._build_response_payload(data, store_names, metadata_filters)
-                    yield {"event": "result", "data": payload}
-                    return
-                except GeminiRetryableError as exc:
-                    LOGGER.warning("Gemini model %s retryable error: %s", model_name, exc)
-                    if attempt + 1 < self.max_attempts_per_model:
-                        await self._sleep_backoff(attempt)
-                        continue
-                except GeminiClientError as exc:
-                    LOGGER.warning("Gemini model %s failed: %s", model_name, exc)
-                    yield {
-                        "event": "status",
-                        "data": {"message": str(exc), "model": model_name},
-                    }
-                    break
-
-        yield {"event": "error", "data": {"message": "잠시 후 다시 시도해 주세요."}}
 
     async def _execute_request(
         self,

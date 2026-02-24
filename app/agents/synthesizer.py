@@ -3,7 +3,6 @@ LangGraph Synthesizer Agent
 Combines retrieval and analysis results into final proposal
 """
 import logging
-from typing import Dict, Any
 from app.agents.state import AgentState
 from app.services.llm_adapter import LLMAdapter
 

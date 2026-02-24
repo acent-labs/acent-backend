@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 
 from app.middleware.tenant_auth import TenantContext, get_tenant_context
 from app.services.freshdesk_client import FreshdeskClient
-from app.services.sync_service import SyncService, SyncOptions, SyncResult, SyncProgress
+from app.services.sync_service import SyncService, SyncOptions, SyncProgress
 from app.services.transformer import GeminiDocument
 from app.services.gemini_file_search import upload_document_to_store
 from app.services.ticket_metadata_service import TicketMetadataService

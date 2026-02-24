@@ -283,7 +283,6 @@ async def chat_stream(
             from google.genai import types
 
             # 스토어가 있으면 파일 검색 도구 추가
-            tools = None
             # TODO: google-genai SDK 1.47.0에서 FileSearch 타입을 지원하지 않아 임시 비활성화
             # if rag_stores:
             #     tools = [

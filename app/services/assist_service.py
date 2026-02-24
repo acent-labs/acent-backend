@@ -7,7 +7,6 @@ Gemini File Search와 Freshdesk API 연동
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import time
 import uuid
@@ -23,7 +22,6 @@ from app.models.assist import (
     Proposal,
 )
 from app.services.gemini_file_search_client import GeminiFileSearchClient, GeminiClientError
-from app.services.freshdesk_client import FreshdeskClient
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +129,6 @@ class AssistService:
         ticket_context = self._build_ticket_context(request, freshdesk_context)
 
         # Gemini를 통한 분석
-        settings = get_settings()
         store_names = self._get_store_names(tenant_id)
 
         try:
@@ -206,7 +203,6 @@ class AssistService:
         try:
             # 티켓 컨텍스트 구성
             ticket_context = self._build_ticket_context(request, freshdesk_context)
-            settings = get_settings()
             store_names = self._get_store_names(tenant_id)
 
             # Event 1: 라우터 결정

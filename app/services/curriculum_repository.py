@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from datetime import datetime, timezone
-from functools import lru_cache
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -461,7 +460,7 @@ class CurriculumRepository:
                 module_id = str(module_id_raw).lower() if module_id_raw else None
                 
                 if not module_id:
-                    LOGGER.warning(f"get_all_progress: skipping row with null module_id")
+                    LOGGER.warning("get_all_progress: skipping row with null module_id")
                     continue
                 status = row.get("status", "not_started")
                 LOGGER.debug(f"get_all_progress: module_id={module_id}, status={status}")

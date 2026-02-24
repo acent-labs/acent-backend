@@ -7,7 +7,6 @@ Handles model selection and API communication.
 import logging
 from typing import Optional, Dict, Any, List
 import json
-import httpx
 
 from app.core.config import get_settings
 from app.services.llm_gateway import LLMRequest, get_llm_gateway

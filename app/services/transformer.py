@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from app.services.normalizer import NormalizedTicket, NormalizedArticle, NormalizedConversation
+from app.services.normalizer import NormalizedTicket, NormalizedArticle
 
 logger = logging.getLogger(__name__)
 

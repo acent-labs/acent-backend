@@ -102,8 +102,6 @@ class GeminiClient:
         if not store_names:
             raise GeminiClientError("At least one file search store name is required")
 
-        metadata_expression = _build_metadata_expression(metadata_filters)
-
         history_parts = [
             {
                 "role": "user",
