@@ -1,6 +1,5 @@
 import asyncio
 
-from app.models.entity import EntityResolutionResult
 from app.services.freshdesk_entity_resolver import FreshdeskEntityResolver
 
 

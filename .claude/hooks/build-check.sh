@@ -35,14 +35,28 @@ detect_project_type() {
 # Run Python linting (ruff preferred, fallback to flake8)
 run_python_check() {
     echo "🐍 Python 검사 중..." >&2
-    
+
     local errors=""
     local has_errors=0
-    
+    local ruff_cmd=""
+
+    # venv 내부 ruff 우선 탐색 (.venv 또는 venv)
+    for venv_dir in "$CLAUDE_PROJECT_DIR/.venv" "$CLAUDE_PROJECT_DIR/venv"; do
+        if [ -x "$venv_dir/bin/ruff" ]; then
+            ruff_cmd="$venv_dir/bin/ruff"
+            break
+        fi
+    done
+
+    # 시스템 PATH fallback
+    if [ -z "$ruff_cmd" ] && command -v ruff &> /dev/null; then
+        ruff_cmd="ruff"
+    fi
+
     # Try ruff first (fast, modern)
-    if command -v ruff &> /dev/null; then
+    if [ -n "$ruff_cmd" ]; then
         echo "  ruff check..." >&2
-        errors=$(ruff check "$CLAUDE_PROJECT_DIR" 2>&1)
+        errors=$("$ruff_cmd" check "$CLAUDE_PROJECT_DIR" 2>&1)
         if [ $? -ne 0 ]; then
             has_errors=1
         fi
@@ -54,23 +68,8 @@ run_python_check() {
             has_errors=1
         fi
     else
-        echo "  ⚠️ ruff 미설치 - 자동 설치 중..." >&2
-        if command -v pip &> /dev/null; then
-            pip install ruff --quiet && echo "  ✅ ruff 설치 완료" >&2
-            errors=$(ruff check "$CLAUDE_PROJECT_DIR" 2>&1)
-            if [ $? -ne 0 ]; then
-                has_errors=1
-            fi
-        elif command -v pip3 &> /dev/null; then
-            pip3 install ruff --quiet && echo "  ✅ ruff 설치 완료" >&2
-            errors=$(ruff check "$CLAUDE_PROJECT_DIR" 2>&1)
-            if [ $? -ne 0 ]; then
-                has_errors=1
-            fi
-        else
-            echo "  ❌ pip 없음 - 수동 설치 필요: pip install ruff" >&2
-            return 0
-        fi
+        echo "  ⚠️ ruff 미설치 (venv 포함) - 건너뜀" >&2
+        return 0
     fi
     
     # Type checking with mypy (optional)

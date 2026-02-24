@@ -1,6 +1,5 @@
 import json
 
-import pytest
 
 
 def _parse_sse_events(lines, *, stop_types=("complete", "error"), max_events=200):

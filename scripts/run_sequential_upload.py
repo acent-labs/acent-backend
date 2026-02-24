@@ -19,15 +19,13 @@ import argparse
 import asyncio
 import os
 import sys
-from typing import Optional
 
 # Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
-from app.services.common_documents import CommonDocumentCursor
-from scripts.reupload_with_metadata import parse_columns_arg, reupload
+from scripts.reupload_with_metadata import parse_columns_arg, reupload  # noqa: E402
 
 
 async def run_batches(args: argparse.Namespace) -> None:

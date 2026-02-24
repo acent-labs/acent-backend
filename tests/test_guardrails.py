@@ -1,5 +1,4 @@
 """Tests for Guardrails Module."""
-import pytest
 from app.services.guardrails import (
     apply_guardrails,
     contains_forbidden_phrases,

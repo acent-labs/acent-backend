@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 from app.models.assist import Proposal
-from app.services.assist_service import AssistService, get_assist_service, ProposalStore
+from app.services.assist_service import get_assist_service, ProposalStore
 
 
 # =============================================================================

@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-from typing import Any, Dict, List
 
 import httpx
 
@@ -58,7 +57,7 @@ async def delete_all_documents(store_name: str):
                 delete_response = await client.delete(delete_url, headers=headers)
                 
                 if delete_response.status_code in [200, 204]:
-                    print(f"  ✓ Deleted successfully")
+                    print("  ✓ Deleted successfully")
                     success_count += 1
                 else:
                     print(f"  ✗ Failed: {delete_response.status_code}")

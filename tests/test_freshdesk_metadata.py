@@ -1,6 +1,5 @@
 import asyncio
 
-import asyncio
 
 from app.services.freshdesk_metadata import FreshdeskMetadataService
 

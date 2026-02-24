@@ -11,8 +11,7 @@ logger = logging.getLogger(__name__)
 # Add current directory to sys.path
 sys.path.append(os.getcwd())
 
-from app.services.curriculum_repository import get_curriculum_repository
-from app.api.routes.curriculum import get_questions
+from app.api.routes.curriculum import get_questions  # noqa: E402
 
 async def main():
     module_id = UUID('dce2d97e-bedf-47b7-91cc-8c6d96c21b44')

@@ -1,10 +1,7 @@
 import asyncio
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from datetime import datetime
 from app.services.sync_service import SyncService, SyncOptions
 from app.services.freshdesk_client import FreshdeskClient
-from app.services.ingestion_service import TicketIngestionRecord
 
 def test_sync_service_tickets_and_articles():
     # Mock FreshdeskClient

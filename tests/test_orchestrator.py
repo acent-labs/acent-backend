@@ -9,9 +9,9 @@ DoD:
 """
 import json
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
-from app.prompts.loader import load_prompt, clear_prompt_cache, PromptSpec
+from app.prompts.loader import load_prompt, clear_prompt_cache
 from app.services.orchestrator.json_repair import (
     repair_json,
     try_parse_json,
@@ -20,7 +20,6 @@ from app.services.orchestrator.json_repair import (
 from app.services.orchestrator.ticket_analysis_orchestrator import (
     TicketAnalysisOrchestrator,
     AnalysisOptions,
-    AnalysisResult,
 )
 from app.services.llm_gateway import LLMResponse
 

@@ -1,6 +1,5 @@
 """Tests for NoCut Denoise Engine."""
-import pytest
-from app.services.denoise import denoise_conversations, DenoiseResult
+from app.services.denoise import denoise_conversations
 
 
 class TestDenoiseConversations:

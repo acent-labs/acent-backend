@@ -1,7 +1,6 @@
 import asyncio
 import os
 import sys
-from typing import Any, Dict, List
 
 import httpx
 
@@ -69,7 +68,7 @@ async def delete_corpus_documents(corpus_name: str, store_name: str):
                         chunk_delete_response = await client.delete(chunk_delete_url, headers=headers)
                         
                         if chunk_delete_response.status_code in [200, 204]:
-                            print(f"    ✓ Deleted chunk")
+                            print("    ✓ Deleted chunk")
                         else:
                             print(f"    ✗ Failed to delete chunk: {chunk_delete_response.status_code}")
                 else:

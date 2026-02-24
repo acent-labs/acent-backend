@@ -1,5 +1,4 @@
 import asyncio
-import os
 from app.core.config import get_settings
 from app.services.gemini_file_search import get_store_documents
 
@@ -8,7 +7,7 @@ async def check_stores():
     ticket_store = getattr(settings, "gemini_store_tickets", None)
     article_store = getattr(settings, "gemini_store_articles", None)
     
-    print(f"Checking stores...")
+    print("Checking stores...")
     print(f"Ticket Store: {ticket_store}")
     print(f"Article Store: {article_store}")
     
