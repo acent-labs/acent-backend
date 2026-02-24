@@ -13,7 +13,7 @@
             "skills": ["fdk-guidelines"]
         },
         "python": {
-            "enabled": false,
+            "enabled": true,
             "description": "Python/FastAPI development patterns",
             "skills": ["fastapi-guidelines"]
         },
