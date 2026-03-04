@@ -14,12 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
-try:
-    from jinja2 import Environment, BaseLoader, TemplateSyntaxError
-except ImportError:
-    Environment = None  # type: ignore
-    BaseLoader = None  # type: ignore
-    TemplateSyntaxError = Exception  # type: ignore
+from jinja2 import Environment, BaseLoader, TemplateSyntaxError
 
 logger = logging.getLogger(__name__)
 
@@ -46,8 +41,7 @@ class PromptSpec:
 
     def __post_init__(self):
         """Initialize Jinja2 environment."""
-        if Environment is not None:
-            self._env = Environment(loader=BaseLoader())
+        self._env = Environment(loader=BaseLoader())
 
     def render(self, context: Dict[str, Any]) -> Tuple[str, str]:
         """
@@ -59,10 +53,6 @@ class PromptSpec:
         Returns:
             Tuple of (system_prompt, user_prompt)
         """
-        if self._env is None:
-            logger.warning("Jinja2 not installed, returning raw templates")
-            return self.system_prompt, self.user_prompt_template
-
         try:
             system = self._env.from_string(self.system_prompt).render(**context)
             user = self._env.from_string(self.user_prompt_template).render(**context)
