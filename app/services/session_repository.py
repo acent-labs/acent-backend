@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import json
+import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta, timezone
 from dataclasses import asdict
 from typing import Any, Dict, Optional
 
-from fastapi import HTTPException, status
 import redis.asyncio as redis
 
 from app.core.config import get_settings
 from app.models.analyzer import AnalyzerResult
+
+logger = logging.getLogger(__name__)
 
 
 SessionRecord = Dict[str, Any]
@@ -203,13 +205,6 @@ class RedisSessionRepository(SessionRepository):
         await self.save(record)
 
 
-def _build_redis_client(url: str) -> redis.Redis:
-    try:
-        return redis.from_url(url, decode_responses=True)
-    except Exception as exc:  # pragma: no cover
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Redis 연결 실패: {exc}") from exc
-
-
 _repo_instance: Optional[SessionRepository] = None
 
 
@@ -221,8 +216,17 @@ async def get_session_repository() -> SessionRepository:
     settings = get_settings()
     ttl_seconds = settings.session_ttl_minutes * 60
     if settings.redis_url:
-        client = _build_redis_client(settings.redis_url)
-        _repo_instance = RedisSessionRepository(client, settings.redis_session_prefix, ttl_seconds)
+        try:
+            client = redis.from_url(settings.redis_url, decode_responses=True)
+            await client.ping()
+            _repo_instance = RedisSessionRepository(client, settings.redis_session_prefix, ttl_seconds)
+        except Exception as exc:  # pragma: no cover
+            logger.warning(
+                "Redis 연결 실패, 인메모리 세션 저장소 사용: %s (redis_url 설정됨)",
+                exc,
+                exc_info=False,
+            )
+            _repo_instance = InMemorySessionRepository(ttl_seconds)
     else:
         _repo_instance = InMemorySessionRepository(ttl_seconds)
     return _repo_instance
