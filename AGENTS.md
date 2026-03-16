@@ -26,7 +26,7 @@
 - Pydantic models live in `app/models`; names use `*Request`, `*Response`, or domain nouns (e.g., `SessionCreateRequest`).
 - Services under `app/services` are thin adapters; keep pure logic separated from I/O for testability.
 - Routes in `app/api` grouped by feature; keep path prefixes consistent with `settings.api_prefix` (default `/api`).
-- **홈페이지 연동**: 프론트는 `homepage` repo (www.wedosoft.net)에서 `NEXT_PUBLIC_AGENT_API_BASE_URL=https://agent-platform.fly.dev/api`로 호출. CORS는 `app/main.py`에서 `https://www.wedosoft.net`, `https://wedosoft.net` 및 regex로 허용. 문서/에이전트 챗은 `GET /api/status`, `POST /api/session` 사용.
+- **홈페이지 연동**: 프론트는 `homepage` repo (www.wedosoft.net)에서 `NEXT_PUBLIC_AGENT_API_BASE_URL=https://acent-api.fly.dev/api`로 호출. CORS는 `app/main.py`에서 `https://www.wedosoft.net`, `https://wedosoft.net` 및 regex로 허용. 문서/에이전트 챗은 `GET /api/status`, `POST /api/session` 사용.
 
 ## Testing Guidelines
 - Test runner: `pytest`.

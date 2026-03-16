@@ -1,8 +1,8 @@
-# fly.toml app configuration file generated for agent-platform
+# fly.toml app configuration file generated for acent-api
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 
-app = 'agent-platform'
+app = 'acent-api'
 primary_region = 'nrt'
 
 [build]
