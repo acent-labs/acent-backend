@@ -1,11 +1,14 @@
 {
 	"folders": [
 		{
-			"name": "agent-platform",
+			"name": "acent-backend",
 			"path": "."
 		},
 		{
-			"path": "../project-a"
+			"path": "../homepage"
+		},
+		{
+			"path": "../onboarding"
 		}
 	],
 	"settings": {}
